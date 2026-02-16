@@ -1,0 +1,49 @@
+{
+    "annotations": {"list": []},
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {"type": "loki", "uid": ""},
+            "gridPos": {"h": 10, "w": 24, "x": 0, "y": 0},
+            "id": 1,
+            "options": {
+                "dedupStrategy": "none",
+                "enableLogDetails": true,
+                "prettifyLogMessage": false,
+                "showCommonLabels": false,
+                "showLabels": true,
+                "showTime": true,
+                "sortOrder": "Descending",
+                "wrapLogMessage": true
+            },
+            "targets": [
+                {
+                    "datasource": {"type": "loki", "uid": ""},
+                    "direction": "backward",
+                    "editorMode": "builder",
+                    "expr": "{app=\"advanced-api-guide\", job=\"laravel\"}",
+                    "queryType": "range",
+                    "refId": "A"
+                }
+            ],
+            "title": "Laravel Application Logs",
+            "type": "logs"
+        }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 39,
+    "style": "dark",
+    "tags": ["laravel", "logs"],
+    "templating": {"list": []},
+    "time": {"from": "now-1h", "to": "now"},
+    "timepicker": {},
+    "timezone": "",
+    "title": "Laravel Logs Overview",
+    "uid": "laravel-logs-overview",
+    "version": 1,
+    "weekStart": ""
+}
