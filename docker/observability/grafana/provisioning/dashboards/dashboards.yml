@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'Advanced API Guide'
+    orgId: 1
+    folder: 'Advanced API Guide'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
