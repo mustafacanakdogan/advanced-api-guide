@@ -4,9 +4,10 @@ use App\Http\Controllers\V2\AuthController;
 use App\Http\Controllers\V2\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/auth/token', [AuthController::class, 'issueToken']);
+Route::post('/auth/token', [AuthController::class, 'issueToken'])
+    ->middleware('throttle:auth-token');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:auth-api'])->group(function () {
     Route::post('/auth/revoke', [AuthController::class, 'revokeCurrent']);
     Route::post('/auth/revoke-all', [AuthController::class, 'revokeAll']);
 
