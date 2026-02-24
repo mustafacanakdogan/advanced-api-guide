@@ -1,12 +1,11 @@
 <?php
 
+use App\Http\Controllers\V2\UserController;
 use Illuminate\Support\Facades\Route;
 
 
 
 
-Route::get('/ping', fn () => response()->json([
-    'version' => 'v2',
-    'pong' => true,
-    'message' => 'pong v2',
-])->header('X-API-Version', 'v2'));
+
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{user}', [UserController::class, 'show']);
