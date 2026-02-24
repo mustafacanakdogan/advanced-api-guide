@@ -27,6 +27,23 @@ final class ApiResponse
         ], $status, $headers);
     }
 
+    public static function error(
+        string $code,
+        ?string $message = null,
+        array $details = [],
+        int $status = 400,
+        array $headers = []
+    ): Response {
+        return response()->json([
+            'success' => false,
+            'error' => [
+                'code' => $code,
+                'message' => $message ?? $code,
+                'details' => $details,
+            ],
+        ], $status, $headers);
+    }
+
     public static function successPaginated(
         LengthAwarePaginator $paginator,
         mixed $data,
