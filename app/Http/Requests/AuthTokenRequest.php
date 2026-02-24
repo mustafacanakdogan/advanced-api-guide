@@ -18,4 +18,5 @@ class AuthTokenRequest extends FormRequest
             'password' => ['required', 'string'],
         ];
     }
+
 }

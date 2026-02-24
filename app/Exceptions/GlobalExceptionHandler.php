@@ -54,7 +54,9 @@ class GlobalExceptionHandler
     protected function resolveDetails(Throwable $e): array
     {
         if ($e instanceof ValidationException) {
-            return $e->errors();
+            return [
+                'fields' => $e->errors(),
+            ];
         }
 
         return [];
