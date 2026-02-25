@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\V2\AuthController;
 use App\Http\Controllers\V2\IdempotencyDemoController;
+use App\Http\Controllers\V2\SlowRequestDemoController;
 use App\Http\Controllers\V2\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\IdempotencyMiddleware;
@@ -18,4 +19,6 @@ Route::middleware(['auth:sanctum', 'throttle:auth-api'])->group(function () {
 
     Route::post('/payments', [IdempotencyDemoController::class, 'store'])
         ->middleware(IdempotencyMiddleware::class);
+
+    Route::get('/slow', SlowRequestDemoController::class);
 });
