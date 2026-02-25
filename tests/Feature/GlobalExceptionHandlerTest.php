@@ -118,6 +118,8 @@ it('includes validation errors in details for validation exception', function ()
 
     expect($content['error']['details'])
         ->toBeArray()
+        ->toHaveKey('fields')
+        ->and($content['error']['details']['fields'])
         ->toHaveKey('email')
         ->toHaveKey('name');
 });
@@ -216,10 +218,12 @@ it('validation exception includes all error messages', function () {
     $content = json_decode($response->getContent(), true);
 
     expect($content['error']['details'])
+        ->toHaveKey('fields')
+        ->and($content['error']['details']['fields'])
         ->toHaveKey('email')
         ->toHaveKey('password')
         ->toHaveKey('name')
-        ->and($content['error']['details']['email'])->toBeArray()
-        ->and($content['error']['details']['password'])->toBeArray()
-        ->and($content['error']['details']['name'])->toBeArray();
+        ->and($content['error']['details']['fields']['email'])->toBeArray()
+        ->and($content['error']['details']['fields']['password'])->toBeArray()
+        ->and($content['error']['details']['fields']['name'])->toBeArray();
 });
