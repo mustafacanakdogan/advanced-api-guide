@@ -15,6 +15,7 @@ Route::middleware(['auth:sanctum', 'throttle:auth-api'])->group(function () {
     Route::post('/auth/revoke-all', [AuthController::class, 'revokeAll']);
 
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/cursor', [UserController::class, 'cursor']);
     Route::get('/users/{user}', [UserController::class, 'show']);
 
     Route::post('/payments', [IdempotencyDemoController::class, 'store'])
