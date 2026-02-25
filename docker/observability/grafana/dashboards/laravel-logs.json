@@ -1,49 +1,124 @@
 {
-    "annotations": {"list": []},
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "id": null,
-    "links": [],
-    "panels": [
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
         {
-            "datasource": {"type": "loki", "uid": ""},
-            "gridPos": {"h": 10, "w": 24, "x": 0, "y": 0},
-            "id": 1,
-            "options": {
-                "dedupStrategy": "none",
-                "enableLogDetails": true,
-                "prettifyLogMessage": false,
-                "showCommonLabels": false,
-                "showLabels": true,
-                "showTime": true,
-                "sortOrder": "Descending",
-                "wrapLogMessage": true
-            },
-            "targets": [
-                {
-                    "datasource": {"type": "loki", "uid": ""},
-                    "direction": "backward",
-                    "editorMode": "builder",
-                    "expr": "{app=\"advanced-api-guide\", job=\"laravel\"}",
-                    "queryType": "range",
-                    "refId": "A"
-                }
-            ],
-            "title": "Laravel Application Logs",
-            "type": "logs"
+          "datasource": {"type": "loki", "uid": ""},
+          "direction": "backward",
+          "editorMode": "builder",
+          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"}",
+          "queryType": "range",
+          "refId": "A"
         }
-    ],
-    "refresh": "10s",
-    "schemaVersion": 39,
-    "style": "dark",
-    "tags": ["laravel", "logs"],
-    "templating": {"list": []},
-    "time": {"from": "now-1h", "to": "now"},
-    "timepicker": {},
-    "timezone": "",
-    "title": "Laravel Logs Overview",
-    "uid": "laravel-logs-overview",
-    "version": 1,
-    "weekStart": ""
+      ],
+      "title": "Laravel Application Logs",
+      "type": "logs"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 2,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "sum(rate({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" [1m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Requests / min",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 3,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "sum(rate(({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" |~ \"\\\"status\\\":(4|5)\" )[1m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors / min (4xx/5xx)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "id": 4,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "avg_over_time({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | regexp \"duration_ms\\\":(?P<duration>\\\\d+)\" | unwrap duration [5m])",
+          "refId": "A"
+        }
+      ],
+      "title": "Avg Request Duration (ms)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 5,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" |~ \"\\\"duration_ms\\\":[1-9]\\\\d{3,}\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Slow Requests (>1000ms)",
+      "type": "logs"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24},
+      "id": 6,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" |~ \"\\\"status\\\":(4|5)\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Requests (4xx/5xx)",
+      "type": "logs"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["laravel", "logs"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "timepicker": {},
+  "timezone": "",
+  "title": "Laravel Observability",
+  "uid": "laravel-observability",
+  "version": 1,
+  "weekStart": ""
 }
