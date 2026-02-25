@@ -94,6 +94,13 @@ npm install
 npm run dev
 ```
 
+Demo user (for auth flow):
+
+```
+email: demo@example.com
+password: password
+```
+
 Docker (with observability):
 
 ```bash
