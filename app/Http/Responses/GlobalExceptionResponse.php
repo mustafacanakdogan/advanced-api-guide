@@ -24,6 +24,7 @@ class GlobalExceptionResponse
                 'details' => $this->details,
                 'trace_id' => $this->traceId,
             ],
+            'meta' => (object) [],
         ], $this->code->httpStatus());
     }
 }
