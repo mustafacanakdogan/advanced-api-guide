@@ -85,6 +85,171 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /v1/users/cursor:
+    get:
+      summary: List users with cursor pagination
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cursor paginated users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorUserResponse'
+  /v1/payments:
+    post:
+      summary: Create a payment (idempotent)
+      tags: [Payments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/slow:
+    get:
+      summary: Slow request demo
+      tags: [Observability]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sleep_ms
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1200
+      responses:
+        '200':
+          description: Slow request demo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlowResponse'
+  /v2/users/cursor:
+    get:
+      summary: List users with cursor pagination
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cursor paginated users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorUserResponse'
+  /v2/payments:
+    post:
+      summary: Create a payment (idempotent)
+      tags: [Payments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v2/slow:
+    get:
+      summary: Slow request demo
+      tags: [Observability]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sleep_ms
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1200
+      responses:
+        '200':
+          description: Slow request demo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlowResponse'
+  /metrics:
+    get:
+      summary: Application metrics
+      tags: [Observability]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Metrics payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
   /v2/auth/token:
     post:
       summary: Issue access token
@@ -235,6 +400,30 @@ components:
               properties:
                 pagination:
                   $ref: '#/components/schemas/Pagination'
+    CursorUserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/Meta'
+            - type: object
+              properties:
+                cursor:
+                  type: object
+                  properties:
+                    next:
+                      type: string
+                      nullable: true
+                    prev:
+                      type: string
+                      nullable: true
     Pagination:
       type: object
       properties:
@@ -275,3 +464,52 @@ components:
               type: string
         meta:
           type: object
+    PaymentRequest:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: number
+          example: 120.5
+        currency:
+          type: string
+          example: USD
+    PaymentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            transaction_id:
+              type: string
+            amount:
+              type: number
+            currency:
+              type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+    SlowResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            slept_ms:
+              type: integer
+        meta:
+          $ref: '#/components/schemas/Meta'
+    MetricsResponse:
+      type: object
+      properties:
+        requests_total:
+          type: integer
+        errors_total:
+          type: integer
+        avg_duration_ms:
+          type: integer
