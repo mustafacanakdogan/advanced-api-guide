@@ -183,6 +183,9 @@ components:
     AuthTokenResponse:
       type: object
       properties:
+        success:
+          type: boolean
+          example: true
         data:
           type: object
           properties:
@@ -208,6 +211,9 @@ components:
     UserResponse:
       type: object
       properties:
+        success:
+          type: boolean
+          example: true
         data:
           $ref: '#/components/schemas/User'
         meta:
@@ -215,6 +221,9 @@ components:
     PaginatedUserResponse:
       type: object
       properties:
+        success:
+          type: boolean
+          example: true
         data:
           type: array
           items:
@@ -264,3 +273,5 @@ components:
               type: object
             trace_id:
               type: string
+        meta:
+          type: object

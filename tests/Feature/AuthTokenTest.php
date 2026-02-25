@@ -17,8 +17,10 @@ it('issues token with valid credentials', function () {
 
     $response
         ->assertOk()
+        ->assertJsonPath('success', true)
         ->assertJsonPath('data.token_type', 'Bearer')
         ->assertJsonStructure([
+            'success',
             'data' => ['token', 'token_type'],
             'meta' => ['request_id', 'version', 'timestamp'],
         ]);

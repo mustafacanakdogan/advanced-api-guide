@@ -27,7 +27,8 @@ it('handles validation exception correctly', function () {
         ->and($content['error'])->toHaveKey('code')
         ->and($content['error'])->toHaveKey('message')
         ->and($content['error'])->toHaveKey('details')
-        ->and($content['error'])->toHaveKey('trace_id');
+        ->and($content['error'])->toHaveKey('trace_id')
+        ->and($content)->toHaveKey('meta');
 });
 
 it('handles 404 not found exception', function () {
@@ -174,7 +175,8 @@ it('response structure is correct', function () {
         ->toHaveKey('error')
         ->and($content['success'])->toBeFalse()
         ->and($content['error'])->toBeArray()
-        ->and($content['error'])->toHaveKeys(['code', 'message', 'details', 'trace_id']);
+        ->and($content['error'])->toHaveKeys(['code', 'message', 'details', 'trace_id'])
+        ->and($content)->toHaveKey('meta');
 });
 
 it('maps correct error codes for http exceptions', function () {

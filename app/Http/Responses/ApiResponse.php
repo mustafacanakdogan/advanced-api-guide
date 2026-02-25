@@ -22,6 +22,7 @@ final class ApiResponse
         $meta = self::buildMeta($extraMeta);
 
         return response()->json([
+            'success' => true,
             'data' => $data,
             'meta' => $meta ?: (object) [],
         ], $status, $headers);
