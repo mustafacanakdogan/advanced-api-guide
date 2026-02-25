@@ -1,59 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Advanced API Guide
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A production‑grade Laravel API showcase. The goal is simple: demonstrate the kind of API decisions that prevent outages, protect systems, and keep clients stable at scale.
 
-## About Laravel
+## Why These Decisions Matter
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**API versioning**
+Breaking changes are inevitable. Versioning lets you evolve the API without breaking existing clients, and gives teams time to migrate safely.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Unified response contract**
+When responses are consistent, clients are predictable and tests are simpler. Every response carries `success`, `data/error`, and `meta` so integration is stable.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Auth token flow**
+Stateless auth is the backbone of scalable APIs. Token issuance + revoke is the minimum set to make authentication secure and manageable.
 
-## Learning Laravel
+**Rate limiting**
+Public APIs get abused. Rate limits protect your infrastructure and prevent brute‑force attacks without blocking legitimate users.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**Idempotency**
+Network retries happen. Idempotency prevents duplicate side effects (e.g., double charges) by making write requests safe to repeat.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Cursor pagination**
+Offset pagination drifts when data changes. Cursor pagination is stable and fast for large datasets.
 
-## Laravel Sponsors
+**Observability**
+You can’t fix what you can’t see. Structured logs + dashboards make latency spikes and error bursts visible in minutes.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**OpenAPI + Redoc**
+Good APIs are products. A living spec + docs is the fastest way to keep clients aligned with reality.
 
-### Premium Partners
+## Architecture Overview
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```mermaid
+graph TD
+  Client[Client / API Consumer]
+  Nginx[Nginx]
+  App[Laravel API]
+  Postgres[(Postgres)]
+  Redis[(Redis)]
+  Loki[Loki]
+  Promtail[Promtail]
+  Grafana[Grafana]
 
-## Contributing
+  Client --> Nginx --> App
+  App --> Postgres
+  App --> Redis
+  App --> Promtail --> Loki --> Grafana
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Architecture Notes
 
-## Code of Conduct
+- **Edge control**: Nginx isolates public traffic, enabling request shaping and static caching without changing the app.
+- **Stateless core**: Auth is token‑based; the API scales horizontally without shared session state.
+- **Deterministic writes**: Idempotency is explicit at the endpoint level to avoid duplicate side effects.
+- **Observability by default**: Logs are structured, metrics are explicit, and dashboards are pre‑wired for fast triage.
+- **Schema as contract**: OpenAPI is treated as a product artifact, not an afterthought.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Failure & Resilience Notes
 
-## Security Vulnerabilities
+- **Retry behavior**: Clients can safely retry write requests that use `Idempotency-Key`.
+- **Idempotency TTL**: Keys are cached for 24 hours to balance safety and storage cost.
+- **Metrics exposure**: `/api/metrics` is auth‑protected to avoid leaking internal service signals.
+- **Slow endpoint purpose**: The `/slow` endpoint is included to validate latency monitoring and dashboard accuracy under controlled delay scenarios.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## What’s Included
+
+- API versioning (`/api/v1`, `/api/v2`)
+- Unified response contract (`success`, `data/error`, `meta`)
+- Auth token flow (issue + revoke)
+- Rate limiting and brute‑force protection
+- Idempotency demo (`/payments`)
+- Cursor pagination (`/users/cursor`)
+- Observability stack (Loki + Promtail + Grafana)
+- OpenAPI spec + Redoc UI
+
+## API Docs
+
+- OpenAPI spec: `/openapi.yaml`
+- Redoc UI: `/docs`
+
+## Observability
+
+- Grafana: `http://localhost:3000` (admin / admin)
+- Dashboards live under `docker/observability`
+
+## Quick Start
+
+```bash
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate
+npm install
+npm run dev
+```
+
+Docker (with observability):
+
+```bash
+docker compose --profile observability up -d
+```
+
+## Demo Endpoints
+
+- `POST /api/v1/auth/token`
+- `POST /api/v1/payments` (Idempotency-Key)
+- `GET /api/v1/users/cursor`
+- `GET /api/v1/slow?sleep_ms=1200`
+- `GET /api/metrics`
+
+## Tests
+
+```bash
+php artisan test
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
