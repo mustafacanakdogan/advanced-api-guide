@@ -124,3 +124,49 @@ php artisan test
 ## License
 
 MIT
+
+## Load Testing (k6)
+
+Minimal k6 scenarios that validate rate limiting, idempotency, and latency behavior.
+
+```bash
+# Auth rate limit (expect 200/401/429 mix)
+k6 run k6/auth-rate-limit.js
+
+# Idempotency (same Idempotency-Key repeated)
+k6 run k6/idempotency.js
+
+# Slow endpoint latency distribution
+k6 run k6/slow-latency.js
+
+# Error traffic (401 + 422) + slow endpoint
+k6 run k6/error-traffic.js
+```
+
+Docker (no local k6 install):
+
+```bash
+docker compose --profile k6 run --rm k6 run /scripts/auth-rate-limit.js
+docker compose --profile k6 run --rm k6 run /scripts/idempotency.js
+docker compose --profile k6 run --rm k6 run /scripts/slow-latency.js
+docker compose --profile k6 run --rm k6 run /scripts/error-traffic.js
+```
+
+Optional env vars:
+
+```bash
+export BASE_URL=http://localhost:8000
+export K6_EMAIL=demo@example.com
+export K6_PASSWORD=password
+export IDEMPOTENCY_KEY=k6demo_idem_1234567890
+```
+
+Make targets:
+
+```bash
+make load-test
+make load-test-auth
+make load-test-idem
+make load-test-slow
+make load-test-errors
+```

@@ -2,7 +2,7 @@ FROM php:8.4-fpm
 
 # system-packages
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpq-dev \
+    git curl zip unzip libpq-dev ca-certificates \
     && docker-php-ext-install pdo pdo_pgsql
 
 RUN pecl install redis \

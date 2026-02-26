@@ -79,6 +79,20 @@ services:
       - redis_data:/data
     command: [ "redis-server", "--appendonly", "yes" ]
 
+  k6:
+    image: grafana/k6:0.52.0
+    container_name: laravel_k6
+    profiles: ["k6"]
+    environment:
+      BASE_URL: http://nginx
+      K6_EMAIL: demo@example.com
+      K6_PASSWORD: password
+      IDEMPOTENCY_KEY: k6demo_idem_1234567890
+    volumes:
+      - ./k6:/scripts:ro
+    depends_on:
+      - nginx
+
 volumes:
   pgdata:
   loki_data:
