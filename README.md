@@ -83,14 +83,12 @@ graph TD
 
 - Grafana: `http://localhost:3000` (admin / admin)
 - Dashboards live under `docker/observability`
+- Included dashboards cover request rate, error rate, p95/p99 latency, and slow requests.
 
 ## Quick Start
 
 ```bash
-cp .env.example .env
-composer install
-php artisan key:generate
-php artisan migrate
+docker compose --profile observability up -d
 ```
 
 Demo user (for auth flow):
@@ -100,11 +98,6 @@ email: demo@example.com
 password: password
 ```
 
-Docker (with observability):
-
-```bash
-docker compose --profile observability up -d
-```
 
 ## Demo Endpoints
 
@@ -129,31 +122,17 @@ MIT
 Minimal k6 scenarios that validate rate limiting, idempotency, and latency behavior.
 
 ```bash
-# Auth rate limit (expect 200/401/429 mix)
-k6 run k6/auth-rate-limit.js
-
-# Idempotency (same Idempotency-Key repeated)
-k6 run k6/idempotency.js
-
-# Slow endpoint latency distribution
-k6 run k6/slow-latency.js
-```
-
-Docker (no local k6 install):
-
-```bash
 docker compose --profile k6 run --rm k6 run /scripts/auth-rate-limit.js
 docker compose --profile k6 run --rm k6 run /scripts/idempotency.js
 docker compose --profile k6 run --rm k6 run /scripts/slow-latency.js
 ```
 
 
-Make targets:
+### Make targets:
 
 ```bash
 make load-test
 make load-test-auth
 make load-test-idem
 make load-test-slow
-make load-test-errors
 ```
