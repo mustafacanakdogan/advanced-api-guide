@@ -30,9 +30,11 @@ class IdempotencyMiddleware
         }
 
         if (!$this->isValidKey($key)) {
-            return response()->json([
-                'message' => 'Invalid Idempotency-Key format',
-            ], 400);
+            return ApiResponse::error(
+                code: 'invalid_idempotency_key',
+                message: 'Invalid Idempotency-Key format',
+                status: 400
+            );
         }
 
         $base = $this->baseKey($userId, $request, $key);
@@ -52,9 +54,11 @@ class IdempotencyMiddleware
 
         $locked = Redis::set($lockKey, self::LOCK_VALUE, 'EX', self::LOCK_TTL, 'NX');
         if (!$locked) {
-            return response()->json([
-                'message' => 'Request already processing',
-            ], 409);
+            return ApiResponse::error(
+                code: 'request_in_progress',
+                message: 'Request with this Idempotency-Key is already being processed.',
+                status: 409
+            );
         }
 
         try {
