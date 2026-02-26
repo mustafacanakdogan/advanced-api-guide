@@ -138,9 +138,6 @@ k6 run k6/idempotency.js
 
 # Slow endpoint latency distribution
 k6 run k6/slow-latency.js
-
-# Error traffic (401 + 422) + slow endpoint
-k6 run k6/error-traffic.js
 ```
 
 Docker (no local k6 install):
@@ -149,7 +146,6 @@ Docker (no local k6 install):
 docker compose --profile k6 run --rm k6 run /scripts/auth-rate-limit.js
 docker compose --profile k6 run --rm k6 run /scripts/idempotency.js
 docker compose --profile k6 run --rm k6 run /scripts/slow-latency.js
-docker compose --profile k6 run --rm k6 run /scripts/error-traffic.js
 ```
 
 Optional env vars:
