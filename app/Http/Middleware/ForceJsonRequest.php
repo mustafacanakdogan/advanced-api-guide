@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,7 +14,7 @@ class ForceJsonRequest
     {
         if (!$request->expectsJson()) {
             return ApiResponse::error(
-                code: 'not_acceptable',
+                code: 'NOT_ACCEPTABLE',
                 message: 'Only application/json is supported.',
                 status: 406
             );

@@ -15,6 +15,7 @@ class RequestLoggingMiddleware
         $start = microtime(true);
         $requestId = $request->header('X-Request-Id') ?? (string) Str::uuid();
         $request->headers->set('X-Request-Id', $requestId);
+        $request->attributes->set('request_id', $requestId);
 
         $response = $next($request);
 

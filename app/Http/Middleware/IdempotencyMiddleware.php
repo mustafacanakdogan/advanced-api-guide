@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +32,7 @@ class IdempotencyMiddleware
 
         if (!$this->isValidKey($key)) {
             return ApiResponse::error(
-                code: 'invalid_idempotency_key',
+                code: 'INVALID_IDEMPOTENCY_KEY',
                 message: 'Invalid Idempotency-Key format',
                 status: 400
             );
@@ -55,7 +56,7 @@ class IdempotencyMiddleware
         $locked = Redis::set($lockKey, self::LOCK_VALUE, 'EX', self::LOCK_TTL, 'NX');
         if (!$locked) {
             return ApiResponse::error(
-                code: 'request_in_progress',
+                code: 'REQUEST_IN_PROGRESS',
                 message: 'Request with this Idempotency-Key is already being processed.',
                 status: 409
             );

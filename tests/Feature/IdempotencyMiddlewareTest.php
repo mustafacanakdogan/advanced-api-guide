@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\IdempotencyMiddleware;
+use App\Http\Responses\ApiResponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
@@ -10,7 +11,7 @@ uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 beforeEach(function () {
     Route::post('/api/orders', function () {
-        return response()->json(['ok' => true], 201);
+        return ApiResponse::success(['ok' => true], status: 201);
     })->middleware(IdempotencyMiddleware::class);
 });
 
@@ -25,7 +26,11 @@ it('caches successful json response and serves subsequent request from cache', f
     $lockKey = "{$base}:lock";
 
     $cachedPayload = json_encode([
-        'data' => ['ok' => true],
+        'data' => [
+            'success' => true,
+            'data' => ['ok' => true],
+            'meta' => [],
+        ],
         'status' => 201,
         'headers' => ['Content-Type' => 'application/json'],
     ]);
@@ -48,7 +53,7 @@ it('caches successful json response and serves subsequent request from cache', f
 
             $decoded = json_decode($valueArg, true);
             return is_array($decoded)
-                && ($decoded['data']['ok'] ?? null) === true
+                && (($decoded['data']['data']['ok'] ?? null) === true)
                 && ($decoded['status'] ?? null) === 201;
         })
         ->andReturn(true);
@@ -63,7 +68,8 @@ it('caches successful json response and serves subsequent request from cache', f
         ->postJson('/api/orders');
 
     $first->assertStatus(201)
-        ->assertJson(['ok' => true]);
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.ok', true);
 
     Redis::shouldReceive('get')
         ->once()
@@ -77,7 +83,8 @@ it('caches successful json response and serves subsequent request from cache', f
     $second->assertStatus(201)
         ->assertHeader('X-Idempotent', 'true')
         ->assertHeader('X-Cache-Hit', 'true')
-        ->assertJson(['ok' => true]);
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.ok', true);
 });
 
 it('returns 409 when request is already processing', function () {
@@ -105,7 +112,8 @@ it('returns 409 when request is already processing', function () {
         ->postJson('/api/orders');
 
     $res->assertStatus(409)
-        ->assertJson(['message' => 'Request already processing']);
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'REQUEST_IN_PROGRESS');
 });
 
 it('returns 400 for invalid idempotency key and does not hit redis', function () {
@@ -121,5 +129,6 @@ it('returns 400 for invalid idempotency key and does not hit redis', function ()
         ->postJson('/api/orders');
 
     $res->assertStatus(400)
-        ->assertJson(['message' => 'Invalid Idempotency-Key format']);
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'INVALID_IDEMPOTENCY_KEY');
 });
