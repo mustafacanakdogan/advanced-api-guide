@@ -20,6 +20,6 @@ it('returns cursor pagination response', function () {
         ->assertJsonStructure([
             'success',
             'data',
-            'meta' => ['request_id', 'version', 'timestamp', 'cursor' => ['next', 'prev']],
+            'meta' => ['request_id', 'timestamp', 'cursor' => ['next', 'prev']],
         ]);
 });

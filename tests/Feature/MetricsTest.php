@@ -14,7 +14,9 @@ it('returns metrics payload', function () {
 
     $response
         ->assertOk()
-        ->assertJsonPath('requests_total', 0)
-        ->assertJsonPath('errors_total', 0)
-        ->assertJsonPath('avg_duration_ms', 0);
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.requests_total', 0)
+        ->assertJsonPath('data.errors_total', 0)
+        ->assertJsonPath('data.avg_duration_ms', 0)
+        ->assertJsonStructure(['meta' => ['request_id', 'timestamp']]);
 });

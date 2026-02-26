@@ -36,8 +36,12 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '200':
           description: Revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokedResponse'
   /v1/auth/revoke-all:
     post:
       summary: Revoke all tokens
@@ -45,8 +49,12 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '200':
           description: Revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokedResponse'
   /v1/users:
     get:
       summary: List users
@@ -280,8 +288,12 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '200':
           description: Revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokedResponse'
   /v2/auth/revoke-all:
     post:
       summary: Revoke all tokens
@@ -289,8 +301,12 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '204':
+        '200':
           description: Revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokedResponse'
   /v2/users:
     get:
       summary: List users
@@ -440,8 +456,6 @@ components:
       properties:
         request_id:
           type: string
-        version:
-          type: string
         timestamp:
           type: string
           format: date-time
@@ -513,3 +527,17 @@ components:
           type: integer
         avg_duration_ms:
           type: integer
+    RevokedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            revoked:
+              type: boolean
+              example: true
+        meta:
+          $ref: '#/components/schemas/Meta'

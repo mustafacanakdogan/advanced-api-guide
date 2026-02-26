@@ -64,7 +64,9 @@ class GlobalExceptionHandler
 
     protected function traceId(Request $request): string
     {
-        return $request->header('X-Request-Id') ?? bin2hex(random_bytes(8));
+        return $request->attributes->get('request_id')
+            ?? $request->header('X-Request-Id')
+            ?? bin2hex(random_bytes(8));
     }
 
     protected function logIfNecessary(Throwable $e, HttpErrorCodes $code, string $traceId): void

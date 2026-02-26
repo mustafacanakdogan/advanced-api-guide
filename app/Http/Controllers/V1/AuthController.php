@@ -39,13 +39,13 @@ class AuthController extends Controller
             $token->delete();
         }
 
-        return ApiResponse::success(null, status: 204);
+        return ApiResponse::success(['revoked' => true]);
     }
 
     public function revokeAll(Request $request)
     {
         $request->user()?->tokens()->delete();
 
-        return ApiResponse::success(null, status: 204);
+        return ApiResponse::success(['revoked' => true]);
     }
 }

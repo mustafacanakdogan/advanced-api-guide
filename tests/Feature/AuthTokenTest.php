@@ -22,7 +22,7 @@ it('issues token with valid credentials', function () {
         ->assertJsonStructure([
             'success',
             'data' => ['token', 'token_type'],
-            'meta' => ['request_id', 'version', 'timestamp'],
+            'meta' => ['request_id', 'timestamp'],
         ]);
 });
 

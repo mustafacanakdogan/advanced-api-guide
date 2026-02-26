@@ -4,6 +4,7 @@ namespace App\Http\Responses;
 
 use App\Enums\HttpErrorCodes;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
 
 class GlobalExceptionResponse
 {
@@ -16,6 +17,10 @@ class GlobalExceptionResponse
 
     public function toResponse(): JsonResponse
     {
+        $requestId = request()->attributes->get('request_id')
+            ?? request()->header('X-Request-Id')
+            ?? (string) Str::uuid();
+
         return response()->json([
             'success' => false,
             'error' => [
@@ -24,7 +29,10 @@ class GlobalExceptionResponse
                 'details' => $this->details,
                 'trace_id' => $this->traceId,
             ],
-            'meta' => (object) [],
+            'meta' => [
+                'request_id' => $requestId,
+                'timestamp' => now()->toIso8601String(),
+            ],
         ], $this->code->httpStatus());
     }
 }

@@ -15,9 +15,7 @@ final class ApiResponse
         int $status = 200,
         array $headers = []
     ): Response {
-        if ($status === 204) {
-            return response()->noContent(204, $headers);
-        }
+      
 
         $meta = self::buildMeta($extraMeta);
 
@@ -32,9 +30,13 @@ final class ApiResponse
         string $code,
         ?string $message = null,
         array $details = [],
+        array $extraMeta = [],
         int $status = 400,
         array $headers = []
     ): Response {
+
+        $meta = self::buildMeta($extraMeta);
+
         return response()->json([
             'success' => false,
             'error' => [
@@ -42,6 +44,7 @@ final class ApiResponse
                 'message' => $message ?? $code,
                 'details' => $details,
             ],
+            'meta' => $meta,
         ], $status, $headers);
     }
 
@@ -69,11 +72,12 @@ final class ApiResponse
 
     private static function buildMeta(array $extraMeta = []): array
     {
-        $requestId = request()->header('X-Request-Id') ?? (string) Str::uuid();
+        $requestId = request()->attributes->get('request_id')
+            ?? request()->header('X-Request-Id')
+            ?? (string) Str::uuid();
 
         $baseMeta = [
             'request_id' => $requestId,
-            'version' => config('api.version'),
             'timestamp' => now()->toIso8601String(),
         ];
 

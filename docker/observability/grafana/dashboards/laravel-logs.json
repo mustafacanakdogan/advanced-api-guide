@@ -41,7 +41,8 @@
         {
           "datasource": {"type": "loki", "uid": ""},
           "editorMode": "code",
-          "expr": "sum(rate({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" [1m]))",
+          "expr": "sum(count_over_time({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" [1m]))",
+          "legendFormat": "requests/min",
           "refId": "A"
         }
       ],
@@ -56,7 +57,8 @@
         {
           "datasource": {"type": "loki", "uid": ""},
           "editorMode": "code",
-          "expr": "sum(rate(({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" |~ \"\\\"status\\\":(4|5)\" )[1m]))",
+          "expr": "sum(count_over_time(({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | json | status >= 400)[1m]))",
+          "legendFormat": "errors/min",
           "refId": "A"
         }
       ],
@@ -71,7 +73,7 @@
         {
           "datasource": {"type": "loki", "uid": ""},
           "editorMode": "code",
-          "expr": "avg_over_time({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | regexp \"duration_ms\\\":(?P<duration>\\\\d+)\" | unwrap duration [5m])",
+          "expr": "avg_over_time(({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | json | unwrap duration_ms)[5m])",
           "refId": "A"
         }
       ],
@@ -81,12 +83,42 @@
     {
       "datasource": {"type": "loki", "uid": ""},
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "id": 7,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "quantile_over_time(0.95, ({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | json | unwrap duration_ms)[5m])",
+          "refId": "A"
+        }
+      ],
+      "title": "p95 Request Duration (ms)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "id": 8,
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": ""},
+          "editorMode": "code",
+          "expr": "quantile_over_time(0.99, ({app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | json | unwrap duration_ms)[5m])",
+          "refId": "A"
+        }
+      ],
+      "title": "p99 Request Duration (ms)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "loki", "uid": ""},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
       "id": 5,
       "targets": [
         {
           "datasource": {"type": "loki", "uid": ""},
           "editorMode": "code",
-          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" |~ \"\\\"duration_ms\\\":[1-9]\\\\d{3,}\"",
+          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | json | duration_ms > 1000",
           "refId": "A"
         }
       ],
@@ -95,13 +127,13 @@
     },
     {
       "datasource": {"type": "loki", "uid": ""},
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24},
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 32},
       "id": 6,
       "targets": [
         {
           "datasource": {"type": "loki", "uid": ""},
           "editorMode": "code",
-          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" |~ \"\\\"status\\\":(4|5)\"",
+          "expr": "{app=\"advanced-api-guide\", job=\"laravel\"} |= \"request.completed\" | json | status >= 400",
           "refId": "A"
         }
       ],
