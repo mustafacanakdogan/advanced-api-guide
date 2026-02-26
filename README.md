@@ -113,9 +113,7 @@ password: password
 php artisan test
 ```
 
-## License
 
-MIT
 
 ## Load Testing (k6)
 
@@ -136,3 +134,7 @@ make load-test-auth
 make load-test-idem
 make load-test-slow
 ```
+
+## License
+
+MIT
