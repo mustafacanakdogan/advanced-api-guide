@@ -147,14 +147,6 @@ docker compose --profile k6 run --rm k6 run /scripts/idempotency.js
 docker compose --profile k6 run --rm k6 run /scripts/slow-latency.js
 ```
 
-Optional env vars:
-
-```bash
-export BASE_URL=http://localhost:8000
-export K6_EMAIL=demo@example.com
-export K6_PASSWORD=password
-export IDEMPOTENCY_KEY=k6demo_idem_1234567890
-```
 
 Make targets:
 
