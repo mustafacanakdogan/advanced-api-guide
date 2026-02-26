@@ -1,31 +1,31 @@
-# Advanced API Guide
+# API Design Essentials
 
 A production‑grade Laravel API showcase. The goal is simple: demonstrate the kind of API decisions that prevent outages, protect systems, and keep clients stable at scale.
 
 ## Why These Decisions Matter
 
-**API versioning**
+### API versioning
 Breaking changes are inevitable. Versioning lets you evolve the API without breaking existing clients, and gives teams time to migrate safely.
 
-**Unified response contract**
+### Unified response contract
 When responses are consistent, clients are predictable and tests are simpler. Every response carries `success`, `data/error`, and `meta` so integration is stable.
 
-**Auth token flow**
+### Auth token flow
 Stateless auth is the backbone of scalable APIs. Token issuance + revoke is the minimum set to make authentication secure and manageable.
 
-**Rate limiting**
+### Rate limiting
 Public APIs get abused. Rate limits protect your infrastructure and prevent brute‑force attacks without blocking legitimate users.
 
-**Idempotency**
+### Idempotency
 Network retries happen. Idempotency prevents duplicate side effects (e.g., double charges) by making write requests safe to repeat.
 
-**Cursor pagination**
+### Cursor pagination
 Offset pagination drifts when data changes. Cursor pagination is stable and fast for large datasets.
 
-**Observability**
+### Observability
 You can’t fix what you can’t see. Structured logs + dashboards make latency spikes and error bursts visible in minutes.
 
-**OpenAPI + Redoc**
+### OpenAPI + Redoc
 Good APIs are products. A living spec + docs is the fastest way to keep clients aligned with reality.
 
 ## Architecture Overview
@@ -72,6 +72,7 @@ graph TD
 - Cursor pagination (`/users/cursor`)
 - Observability stack (Loki + Promtail + Grafana)
 - OpenAPI spec + Redoc UI
+- Load testing (k6)
 
 ## API Docs
 
@@ -82,16 +83,12 @@ graph TD
 
 - Grafana: `http://localhost:3000` (admin / admin)
 - Dashboards live under `docker/observability`
+- Included dashboards cover request rate, error rate, p95/p99 latency, and slow requests.
 
 ## Quick Start
 
 ```bash
-cp .env.example .env
-composer install
-php artisan key:generate
-php artisan migrate
-npm install
-npm run dev
+docker compose --profile observability up -d
 ```
 
 Demo user (for auth flow):
@@ -101,11 +98,6 @@ email: demo@example.com
 password: password
 ```
 
-Docker (with observability):
-
-```bash
-docker compose --profile observability up -d
-```
 
 ## Demo Endpoints
 
@@ -121,52 +113,28 @@ docker compose --profile observability up -d
 php artisan test
 ```
 
-## License
 
-MIT
 
 ## Load Testing (k6)
 
 Minimal k6 scenarios that validate rate limiting, idempotency, and latency behavior.
 
 ```bash
-# Auth rate limit (expect 200/401/429 mix)
-k6 run k6/auth-rate-limit.js
-
-# Idempotency (same Idempotency-Key repeated)
-k6 run k6/idempotency.js
-
-# Slow endpoint latency distribution
-k6 run k6/slow-latency.js
-
-# Error traffic (401 + 422) + slow endpoint
-k6 run k6/error-traffic.js
-```
-
-Docker (no local k6 install):
-
-```bash
 docker compose --profile k6 run --rm k6 run /scripts/auth-rate-limit.js
 docker compose --profile k6 run --rm k6 run /scripts/idempotency.js
 docker compose --profile k6 run --rm k6 run /scripts/slow-latency.js
-docker compose --profile k6 run --rm k6 run /scripts/error-traffic.js
 ```
 
-Optional env vars:
 
-```bash
-export BASE_URL=http://localhost:8000
-export K6_EMAIL=demo@example.com
-export K6_PASSWORD=password
-export IDEMPOTENCY_KEY=k6demo_idem_1234567890
-```
-
-Make targets:
+### Make targets:
 
 ```bash
 make load-test
 make load-test-auth
 make load-test-idem
 make load-test-slow
-make load-test-errors
 ```
+
+## License
+
+MIT
