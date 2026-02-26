@@ -72,6 +72,7 @@ graph TD
 - Cursor pagination (`/users/cursor`)
 - Observability stack (Loki + Promtail + Grafana)
 - OpenAPI spec + Redoc UI
+- Load testing (k6)
 
 ## API Docs
 
