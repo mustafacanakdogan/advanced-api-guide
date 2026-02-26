@@ -4,28 +4,28 @@ A production‑grade Laravel API showcase. The goal is simple: demonstrate the k
 
 ## Why These Decisions Matter
 
-**API versioning**
+### API versioning
 Breaking changes are inevitable. Versioning lets you evolve the API without breaking existing clients, and gives teams time to migrate safely.
 
-**Unified response contract**
+### Unified response contract
 When responses are consistent, clients are predictable and tests are simpler. Every response carries `success`, `data/error`, and `meta` so integration is stable.
 
-**Auth token flow**
+### Auth token flow
 Stateless auth is the backbone of scalable APIs. Token issuance + revoke is the minimum set to make authentication secure and manageable.
 
-**Rate limiting**
+### Rate limiting
 Public APIs get abused. Rate limits protect your infrastructure and prevent brute‑force attacks without blocking legitimate users.
 
-**Idempotency**
+### Idempotency
 Network retries happen. Idempotency prevents duplicate side effects (e.g., double charges) by making write requests safe to repeat.
 
-**Cursor pagination**
+### Cursor pagination
 Offset pagination drifts when data changes. Cursor pagination is stable and fast for large datasets.
 
-**Observability**
+### Observability
 You can’t fix what you can’t see. Structured logs + dashboards make latency spikes and error bursts visible in minutes.
 
-**OpenAPI + Redoc**
+### OpenAPI + Redoc
 Good APIs are products. A living spec + docs is the fastest way to keep clients aligned with reality.
 
 ## Architecture Overview
