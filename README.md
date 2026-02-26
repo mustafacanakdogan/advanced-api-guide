@@ -1,4 +1,4 @@
-# Advanced API Guide
+# API Design Essentials
 
 A production‑grade Laravel API showcase. The goal is simple: demonstrate the kind of API decisions that prevent outages, protect systems, and keep clients stable at scale.
 
@@ -90,8 +90,6 @@ cp .env.example .env
 composer install
 php artisan key:generate
 php artisan migrate
-npm install
-npm run dev
 ```
 
 Demo user (for auth flow):
