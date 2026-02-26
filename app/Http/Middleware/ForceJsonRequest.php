@@ -12,11 +12,12 @@ class ForceJsonRequest
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->expectsJson()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Only application/json is supported.',
-                'code' => 406
-            ], 406);
+            return ApiResponse::error(
+                code: 'not_acceptable',
+                message: 'Only application/json is supported.',
+                status: 406
+            );
+           
         }
 
         return $next($request);

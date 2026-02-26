@@ -11,6 +11,8 @@ enum HttpErrorCodes: string
     case METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED';
     case TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS';
     case INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR';
+    case NOT_ACCEPTABLE = 'NOT_ACCEPTABLE';
+
 
     public function httpStatus(): int
     {
@@ -20,6 +22,7 @@ enum HttpErrorCodes: string
             self::UNAUTHORIZED => 403,
             self::NOT_FOUND => 404,
             self::METHOD_NOT_ALLOWED => 405,
+             self::NOT_ACCEPTABLE => 406,
             self::TOO_MANY_REQUESTS => 429,
             self::INTERNAL_SERVER_ERROR => 500,
         };
@@ -35,6 +38,7 @@ enum HttpErrorCodes: string
             self::METHOD_NOT_ALLOWED => 'Method not allowed.',
             self::TOO_MANY_REQUESTS => 'Too many requests.',
             self::INTERNAL_SERVER_ERROR => 'An unexpected error occurred.',
+            self::NOT_ACCEPTABLE => 'Only application/json is supported.',
         };
     }
 

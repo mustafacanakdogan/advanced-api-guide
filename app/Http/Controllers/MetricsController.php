@@ -15,10 +15,11 @@ class MetricsController extends Controller
 
         $avgDuration = $requests > 0 ? (int) round($durationTotal / $requests) : 0;
 
-        return response()->json([
+        return ApiResponse::success([
             'requests_total' => $requests,
             'errors_total' => $errors,
             'avg_duration_ms' => $avgDuration,
         ]);
+       
     }
 }

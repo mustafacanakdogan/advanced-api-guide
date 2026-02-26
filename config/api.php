@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'version' => env('API_VERSION', 'v1'),
+    'version' => env('API_VERSION'),
 ];
