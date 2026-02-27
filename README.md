@@ -88,6 +88,7 @@ graph TD
 ## Quick Start
 
 ```bash
+cp .env.example .env
 docker compose --profile observability up -d
 ```
 
